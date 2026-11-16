@@ -1,0 +1,24 @@
+﻿@model WebApplicationShop.Dto.UserDto
+
+<h1>Мой профиль</h1>
+
+<table class="table" style="max-width: 500px">
+    <tr><th>№</th><td>@Model.Id</td></tr>
+    <tr><th>Имя</th><td>@Model.Name</td></tr>
+    <tr><th>Email</th><td>@Model.Email</td></tr>
+    <tr><th>Роль</th><td>@Model.RoleName</td></tr>
+</table>
+
+<h4 class="mt-4">Что вам доступно</h4>
+<ul>
+    <li>Просмотр товаров и категорий</li>
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+    {
+        <li>Добавление и редактирование товаров</li>
+    }
+    @if (User.IsInRole("Admin"))
+    {
+        <li>Удаление товаров</li>
+        <li>Управление категориями</li>
+    }
+</ul>
