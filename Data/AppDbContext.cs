@@ -16,6 +16,7 @@ namespace WebApplicationShop.Data
             modelBuilder.Entity<Category>().HasIndex(c => c.Name).IsUnique();
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
             modelBuilder.Entity<Role>().HasData(new Role { Id = 1, Name = "Admin" }, new Role { Id = 2, Name = "Manager" }, new Role { Id = 3, Name = "User" });
+            modelBuilder.Entity<Product>().Property(p => p.Price).HasConversion<double>();
         }
     }
 }

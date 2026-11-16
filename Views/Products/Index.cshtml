@@ -2,19 +2,43 @@
 
 <h1>Каталог товаров</h1>
 
-<form asp-action="Index" method="get">
-    <select name="categoryId"
-            class="form-select mb-3"
-            onchange="this.form.submit()">
-        <option value="">Все категории</option>
-        @foreach (var cat in Model.Categories)
-        {
-            <option value="@cat.Id" selected="@(Model.SelectedCategoryId == cat.Id)">
-                @cat.Name
-            </option>
-        }
-    </select>
+<form asp-action="Index" method="get" class="row g-2 align-items-end mb-3">
+    <div class="col-md-3">
+        <label class="form-label">Категория</label>
+        <select name="categoryId" class="form-select">
+            <option value="">Все категории</option>
+            @foreach (var cat in Model.Categories)
+            {
+                <option value="@cat.Id" selected="@(Model.SelectedCategoryId == cat.Id)">
+                    @cat.Name
+                </option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Цена от</label>
+        <input type="number" name="minPrice" value="@Model.MinPrice" min="0" class="form-control" />
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Цена до</label>
+        <input type="number" name="maxPrice" value="@Model.MaxPrice" min="0" class="form-control" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Сортировка</label>
+        <select name="sort" class="form-select">
+            <option value="name" selected="@(Model.Sort == "name")">По названию (А-Я)</option>
+            <option value="name_desc" selected="@(Model.Sort == "name_desc")">По названию (Я-А)</option>
+            <option value="price" selected="@(Model.Sort == "price")">Сначала дешёвые</option>
+            <option value="price_desc" selected="@(Model.Sort == "price_desc")">Сначала дорогие</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary">Показать</button>
+        <a asp-action="Index" class="btn btn-light">Сброс</a>
+    </div>
 </form>
+
+<p class="text-muted">Найдено товаров: @Model.Products.Count</p>
 
 @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
 {

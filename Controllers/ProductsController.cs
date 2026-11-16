@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq.Dynamic.Core;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplicationShop.Data;
 using WebApplicationShop.Models;
@@ -15,20 +16,51 @@ namespace WebApplicationShop.Controllers
             _context = context;
         }
 
-        public IActionResult Index(int? categoryId)
+        private static readonly Dictionary<string, string> SortOptions = new()
+        {
+            ["name"] = "Name",
+            ["name_desc"] = "Name desc",
+            ["price"] = "Price",
+            ["price_desc"] = "Price desc"
+        };
+
+        public IActionResult Index(int? categoryId, decimal? minPrice, decimal? maxPrice, string? sort)
         {
             var vm = new ProductsIndexViewModel();
-
             IQueryable<Product> query = _context.Products.Include(p => p.Categories);
-
+            var conditions = new List<string>();
+            var values = new List<object>();
             if (categoryId.HasValue)
             {
-                query = query.Where(p => p.Categories.Any(c => c.Id == categoryId.Value));
+                conditions.Add($"Categories.Any(Id == @{values.Count})");
+                values.Add(categoryId.Value);
             }
+            if (minPrice.HasValue)
+            {
+                conditions.Add($"Price >= @{values.Count}");
+                values.Add(minPrice.Value);
+            }
+            if (maxPrice.HasValue)
+            {
+                conditions.Add($"Price <= @{values.Count}");
+                values.Add(maxPrice.Value);
+            }
+            if (conditions.Count > 0)
+            {
+                query = query.Where(string.Join(" && ", conditions), values.ToArray());
+            }
+            if (sort == null || !SortOptions.ContainsKey(sort))
+            {
+                sort = "name";
+            }
+            query = query.OrderBy(SortOptions[sort]);
 
             vm.Products = query.ToList();
             vm.Categories = _context.Categories.ToList();
             vm.SelectedCategoryId = categoryId;
+            vm.MinPrice = minPrice;
+            vm.MaxPrice = maxPrice;
+            vm.Sort = sort;
 
             return View(vm);
         }

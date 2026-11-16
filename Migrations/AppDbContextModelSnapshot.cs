@@ -67,8 +67,8 @@ namespace WebApplicationShop.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("TEXT");
+                    b.Property<double>("Price")
+                        .HasColumnType("REAL");
 
                     b.HasKey("Id");
 
