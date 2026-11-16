@@ -1,23 +1,30 @@
 ﻿@model List<WebApplicationShop.Dto.UserDto>
+@{
+    string sort = ViewBag.Sort;
+    bool desc = ViewBag.Desc;
+    // повторный клик по тому же столбцу меняет направление сортировки
+    bool NextDesc(string field) => field == sort && !desc;
+    string Arrow(string field) => field == sort ? (desc ? " ▼" : " ▲") : "";
+}
 
 <h1>Пользователи</h1>
 
 <div class="mb-3">
     Роль:
-    <a asp-action="Index" class="btn btn-sm @(ViewBag.Role == null ? "btn-primary" : "btn-light")">Все</a>
+    <a asp-action="Index" asp-route-sort="@sort" asp-route-desc="@desc" class="btn btn-sm @(ViewBag.Role == null ? "btn-primary" : "btn-light")">Все</a>
     @foreach (string r in ViewBag.Roles)
     {
-        <a asp-action="Index" asp-route-role="@r" class="btn btn-sm @(ViewBag.Role == r ? "btn-primary" : "btn-light")">@r</a>
+        <a asp-action="Index" asp-route-role="@r" asp-route-sort="@sort" asp-route-desc="@desc" class="btn btn-sm @(ViewBag.Role == r ? "btn-primary" : "btn-light")">@r</a>
     }
 </div>
 
 <table class="table">
     <thead>
         <tr>
-            <th>№</th>
-            <th>Имя</th>
-            <th>Email</th>
-            <th>Роль</th>
+            <th><a asp-action="Index" asp-route-role="@ViewBag.Role" asp-route-sort="Id" asp-route-desc="@NextDesc("Id")">№@(Arrow("Id"))</a></th>
+            <th><a asp-action="Index" asp-route-role="@ViewBag.Role" asp-route-sort="Name" asp-route-desc="@NextDesc("Name")">Имя@(Arrow("Name"))</a></th>
+            <th><a asp-action="Index" asp-route-role="@ViewBag.Role" asp-route-sort="Email" asp-route-desc="@NextDesc("Email")">Email@(Arrow("Email"))</a></th>
+            <th><a asp-action="Index" asp-route-role="@ViewBag.Role" asp-route-sort="RoleName" asp-route-desc="@NextDesc("RoleName")">Роль@(Arrow("RoleName"))</a></th>
         </tr>
     </thead>
     <tbody>
